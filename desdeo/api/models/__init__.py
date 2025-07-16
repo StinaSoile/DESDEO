@@ -19,6 +19,7 @@ __all__ = [
     "NIMBUSClassificationRequest",
     "NIMBUSClassificationState",
     "NIMBUSSaveRequest",
+    "NIMBUSResponse",
     "NIMBUSSaveState",
     "ObjectiveDB",
     "PreferenceBase",
@@ -47,7 +48,7 @@ __all__ = [
 
 from .archive import UserSavedSolutionBase, UserSavedSolutionDB
 from .generic import IntermediateSolutionRequest
-from .nimbus import NIMBUSClassificationRequest, NIMBUSSaveRequest
+from .nimbus import NIMBUSClassificationRequest, NIMBUSSaveRequest, NIMBUSResponse
 from .preference import Bounds, PreferenceBase, PreferenceDB, ReferencePoint
 from .problem import (
     ConstantDB,

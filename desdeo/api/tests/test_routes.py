@@ -1,4 +1,5 @@
 """Tests related to routes and routers."""
+import json
 
 from fastapi import status
 from fastapi.testclient import TestClient
@@ -10,6 +11,7 @@ from desdeo.api.models import (
     NIMBUSClassificationRequest,
     NIMBUSSaveRequest,
     NIMBUSSaveState,
+    NIMBUSResponse,
     ProblemGetRequest,
     ProblemInfo,
     ReferencePoint,
@@ -225,14 +227,94 @@ def test_nimbus_solve(client: TestClient):
     """Test that using the NIMBUS method works as expected."""
     access_token = login(client)
 
+    preference = ReferencePoint(aspiration_levels={"f_1": 0.5, "f_2": 0.6, "f_3": 0.4})
+
     request = NIMBUSClassificationRequest(
         problem_id=1,
-        preference=ReferencePoint(aspiration_levels={"f_1": 0.5, "f_2": 0.6, "f_3": 0.4}),
+        preference=preference,
         current_objectives={"f_1": 0.6, "f_2": 0.4, "f_3": 0.5},
+        num_desired=3
     )
 
     response = post_json(client, "/method/nimbus/solve", request.model_dump(), access_token)
     assert response.status_code == status.HTTP_200_OK
+    result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
+    assert result.previous_preference == preference
+    """
+    print("Current solutions:")
+    for res in result.current_solutions:
+        print(res)
+    print()
+    print("Saved solutions:")
+    for res in result.saved_solutions:
+        print(res)
+    print()
+    print("All solutions:")
+    for res in result.all_solutions:
+        print(res)
+    print()
+    """
+    assert len(result.all_solutions) == 3
+
+    preference = ReferencePoint(aspiration_levels={"f_1": 0.1, "f_2": 0.1, "f_3": 0.9})
+
+    request = NIMBUSClassificationRequest(
+        problem_id=1,
+        preference=preference,
+        current_objectives=result.current_solutions[0]["objective_values"],
+        num_desired=3,
+        parent_state_id=result.current_solutions[0]["address"]["state_id"]
+    )
+
+    response = post_json(client, "/method/nimbus/solve", request.model_dump(), access_token)
+    assert response.status_code == status.HTTP_200_OK
+    result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
+    assert result.previous_preference == preference
+    """
+    print("Current solutions:")
+    for res in result.current_solutions:
+        print(res)
+    print()
+    print("Saved solutions:")
+    for res in result.saved_solutions:
+        print(res)
+    print()
+    print("All solutions:")
+    for res in result.all_solutions:
+        print(res)
+    print()
+    """
+    assert len(result.all_solutions) == 6
+
+    # Same as the first one. Therefore, (I believe) STOM and ASF give same solutions
+    preference = ReferencePoint(aspiration_levels={"f_1": 0.5, "f_2": 0.6, "f_3": 0.4})
+
+    request = NIMBUSClassificationRequest(
+        problem_id=1,
+        preference=preference,
+        current_objectives=result.current_solutions[0]["objective_values"],
+        num_desired=3,
+        parent_state_id=result.current_solutions[0]["address"]["state_id"]
+    )
+
+    response = post_json(client, "/method/nimbus/solve", request.model_dump(), access_token)
+    assert response.status_code == status.HTTP_200_OK
+    result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
+    assert result.previous_preference == preference
+    """
+    print("Current solutions:")
+    for res in result.current_solutions:
+        print(res)
+    print()
+    print("Saved solutions:")
+    for res in result.saved_solutions:
+        print(res)
+    print()
+    print("All solutions:")
+    for res in result.all_solutions:
+        print(res)
+    """
+    assert len(result.all_solutions) == 7
 
 
 def test_intermediate_solve(client: TestClient):

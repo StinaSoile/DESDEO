@@ -20,6 +20,11 @@ class UserSavedSolutionBase(SQLModel):
     constraint_values: dict[str, float] | None = Field(sa_column=Column(JSON), default=None)
     extra_func_values: dict[str, float] | None = Field(sa_column=Column(JSON), default=None)
 
+    """Should this be converted into 
+    objective_values: dict[str, float]
+    address: dict[str, int]
+    """
+
 class UserSavedSolutionDB(UserSavedSolutionBase, table=True):
     """Database model of an archive entry."""
 

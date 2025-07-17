@@ -41,7 +41,7 @@ def filter_duplicates(
     objective_values_list = list(map(lambda sol: sol["objective_values"], solutions))
     # Get the function symbols
     objective_keys = [key for key in objective_values_list[0]]
-    # Get the corresponding values for functions into a list
+    # Get the corresponding values for functions into a list of lists of values
     valuelists = list(map(lambda dictionary: list(map(lambda key: dictionary[key], objective_keys)), objective_values_list))
 
     # Check duplicate indices
@@ -189,6 +189,11 @@ def solve_solutions(
     all_solutions = []
     parent = state
     while parent != None:
+        # Skip over states that are not NIMBUS classification states
+        if not (parent.state.method == "nimbus" and parent.state.phase == "solve_candidates"):
+            parent = parent.parent
+            continue
+        # Get the solver results from state
         parent_solver_results: list[SolverResults] = parent.state.solver_results
         for i in range(len(parent_solver_results)):
             all_solutions.append(
@@ -213,6 +218,8 @@ def solve_solutions(
 
     return response
 
+# TODO: Since we won't send the full solution back to frontend, we cannot send a full
+# solution to backend either. Perhaps we need to work with indices on this one too.
 @router.post("/save")
 def save(
     request: NIMBUSSaveRequest,

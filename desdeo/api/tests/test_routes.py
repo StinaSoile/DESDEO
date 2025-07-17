@@ -240,7 +240,7 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    """
+    
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -253,7 +253,7 @@ def test_nimbus_solve(client: TestClient):
     for res in result.all_solutions:
         print(res)
     print()
-    """
+    
     assert len(result.all_solutions) == 3
 
     preference = ReferencePoint(aspiration_levels={"f_1": 0.1, "f_2": 0.1, "f_3": 0.9})
@@ -270,7 +270,7 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    """
+    
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -283,10 +283,11 @@ def test_nimbus_solve(client: TestClient):
     for res in result.all_solutions:
         print(res)
     print()
-    """
+    
     assert len(result.all_solutions) == 6
 
-    # Same as the first one. Therefore, (I believe) STOM and ASF give same solutions
+    # Same as the first one. Therefore, (I believe) STOM and ASF give same solutions,
+    # which should be reflected on the amount of all solutions
     preference = ReferencePoint(aspiration_levels={"f_1": 0.5, "f_2": 0.6, "f_3": 0.4})
 
     request = NIMBUSClassificationRequest(
@@ -301,7 +302,7 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSResponse = NIMBUSResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    """
+    
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -313,7 +314,7 @@ def test_nimbus_solve(client: TestClient):
     print("All solutions:")
     for res in result.all_solutions:
         print(res)
-    """
+    
     assert len(result.all_solutions) == 7
 
 

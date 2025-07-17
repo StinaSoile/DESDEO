@@ -22,6 +22,7 @@ class NIMBUSClassificationRequest(SQLModel):
     current_objectives: dict[str, float] = Field(sa_column=Column(JSON))
     num_desired: int | None = Field(default=1)
 
+
 class NIMBUSSaveRequest(SQLModel):
     """Request model for saving solutions from any method's state."""
 
@@ -31,7 +32,7 @@ class NIMBUSSaveRequest(SQLModel):
 
     solutions: list[UserSavedSolverResults]  # List of solutions to save
 
-# TODO: Work on this
+
 class NIMBUSResponse(SQLModel):
     """The response from most NIMBUS endpoints."""
 

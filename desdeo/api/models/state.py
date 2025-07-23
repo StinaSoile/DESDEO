@@ -7,7 +7,7 @@ from sqlmodel import JSON, Column, Field, Relationship, SQLModel
 
 from desdeo.tools import SolverResults
 
-from .archive import UserSavedSolutionDB
+from .archive import UserSavedSolutionDB, SolutionAddress
 from .preference import PreferenceDB
 from .problem import ProblemDB
 from .session import InteractiveSessionDB
@@ -103,7 +103,7 @@ class NIMBUSSaveState(NIMBUSBaseState):
     """State of the nimbus method for saving solutions."""
 
     phase: Literal["save_solutions"] = "save_solutions"
-    solver_results: list[SolverResults] = Field(sa_column=Column(JSON))
+    solution_addresses: list[SolutionAddress] = Field(sa_column=Column(JSON))
 
 class IntermediateSolutionState(BaseState):
     """State of the nimbus method for computing solutions."""

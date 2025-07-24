@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from .state import StateDB
     from .user import User
 
-"""I'm for some reason unable to import this stuff"""
 class SolutionAddress(SQLModel):
     objective_values: dict[str, float] = Field(sa_column=Column(JSON))
     address_state: int = Field(sa_column=Column(JSON))
@@ -22,7 +21,7 @@ class UserSavedSolutionDB(SolutionAddress, table=True):
     name: str | None = Field(default=None, nullable=True)  # Optional name for the solution
     user_id: int | None = Field(foreign_key="user.id", default=None)
     problem_id: int | None = Field(foreign_key="problemdb.id", default=None)
-    state_id: int | None = Field(foreign_key="statedb.id", default=None)
+    state_id: int | None = Field(foreign_key="statedb.id", default=None) # The save state, not the state the solution is found from?
     # Back populates
     user: "User" = Relationship(back_populates="archive")
     problem: "ProblemDB" = Relationship(back_populates="solutions")

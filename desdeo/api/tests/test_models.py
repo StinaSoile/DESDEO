@@ -498,7 +498,7 @@ def test_from_problem_to_d_and_back(session_and_user: dict[str, Session | list[U
         # check that problems are equal
         assert compare_models(problem, problem_db)
 
-# REWRITE TO ADDRESS THE NEW FORMULATION OF THE USERARCHIVEDSOLUTION!
+
 def test_archive_entry(session_and_user: dict[str, Session | list[User]]):
     """Test that the archive works as intended."""
     session: Session = session_and_user["session"]
@@ -542,7 +542,7 @@ def test_archive_entry(session_and_user: dict[str, Session | list[User]]):
     assert from_db.address_state == address_state
     assert from_db.address_result == address_result
 
-# REWRITE TO ADDRESS THE NEW FORMULATION OF THE USERARCHIVEDSOLUTION!
+
 def test_user_save_solutions(session_and_user: dict[str, Session | list[User]]):
     """Test that user_save_solutions correctly saves solutions to the usersavedsolutiondb in the database."""
     session = session_and_user["session"]

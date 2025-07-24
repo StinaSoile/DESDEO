@@ -241,7 +241,7 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    
+    """
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -254,6 +254,7 @@ def test_nimbus_solve(client: TestClient):
     for res in result.all_solutions:
         print(res)
     print()
+    """
     
     assert len(result.all_solutions) == 3
 
@@ -299,6 +300,7 @@ def test_nimbus_solve(client: TestClient):
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
     
+    """
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -311,10 +313,38 @@ def test_nimbus_solve(client: TestClient):
     for res in result.all_solutions:
         print(res)
     print()
+    """
     
     # We saved the same solution twice, so the filtering should remove one of those.
     assert len(result.saved_solutions) == 1
     assert len(result.all_solutions) == 6
+
+    # Save some more solutions!
+    solution_to_be_saved: SolutionAddress = result.current_solutions[0]
+
+    request = NIMBUSSaveRequest(
+        problem_id=1,
+        solutions=[
+            UserSavedSolutionAddress(
+                name="solution_1",
+                objective_values=solution_to_be_saved.objective_values,
+                address_state=solution_to_be_saved.address_state,
+                address_result=solution_to_be_saved.address_result
+            ),
+            UserSavedSolutionAddress(
+                name="solution_2",
+                objective_values=solution_to_be_saved.objective_values,
+                address_state=solution_to_be_saved.address_state,
+                address_result=solution_to_be_saved.address_result
+            )
+        ],
+        parent_state_id=result.state_id
+    )
+
+    response = post_json(client, "/method/nimbus/save", request.model_dump(), access_token)
+    assert response.status_code == status.HTTP_200_OK
+    result2: NIMBUSSaveResponse = NIMBUSSaveResponse.model_validate(json.loads(response.content.decode("utf-8")))
+    assert result2.state_id != None
 
     # Same as the first one. Therefore, (I believe) STOM and ASF give same solutions,
     # which should be reflected on the amount of all solutions
@@ -333,6 +363,7 @@ def test_nimbus_solve(client: TestClient):
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
     
+    """
     print("Current solutions:")
     for res in result.current_solutions:
         print(res)
@@ -344,7 +375,9 @@ def test_nimbus_solve(client: TestClient):
     print("All solutions:")
     for res in result.all_solutions:
         print(res)
+    """
     
+    assert len(result.saved_solutions) == 2
     assert len(result.all_solutions) == 7
 
 
@@ -361,7 +394,7 @@ def test_intermediate_solve(client: TestClient):
     response = post_json(client, "/method/generic/intermediate", request.model_dump(), access_token)
     assert response.status_code == status.HTTP_200_OK
 
-# REWRITE TO ADDRESS THE NEW FORMULATION OF THE USERARCHIVEDSOLUTION!
+
 def test_save_solution(client: TestClient):
     """Test that saving solutions works as expected."""
     # Login to get access token
@@ -398,6 +431,7 @@ def test_save_solution(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     save_response = NIMBUSSaveResponse.model_validate(response.json())
     assert save_response.state_id != None
+    
 
 def test_add_new_dm(client: TestClient):
     """Test that adding a decision maker works"""

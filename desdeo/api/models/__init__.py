@@ -17,6 +17,8 @@ __all__ = [
     "NIMBUSBaseState",
     "NIMBUSClassificationRequest",
     "NIMBUSClassificationState",
+    "NIMBUSInitializationRequest",
+    "NIMBUSInitializationState",
     "NIMBUSSaveRequest",
     "NIMBUSClassificationResponse",
     "NIMBUSSaveResponse",
@@ -43,33 +45,42 @@ __all__ = [
     "UserRole",
     "VariableDB",
     "ProblemMetaDataDB",
+    "BaseProblemMetaData",
     "ForestProblemMetaData",
     "SolutionAddress",
     "UserSavedSolutionAddress",
+    "UtopiaRequest",
+    "UtopiaResponse",
+    "ProblemMetaDataGetRequest",
 ]
 
 from .archive import UserSavedSolutionDB, SolutionAddress, UserSavedSolutionAddress
 from .generic import IntermediateSolutionRequest
-from .nimbus import NIMBUSClassificationRequest, NIMBUSSaveRequest, NIMBUSClassificationResponse, NIMBUSSaveResponse
+from .nimbus import NIMBUSClassificationRequest, NIMBUSInitializationRequest, NIMBUSSaveRequest, NIMBUSClassificationResponse, NIMBUSSaveResponse
 from .preference import Bounds, PreferenceBase, PreferenceDB, ReferencePoint
 from .problem import (
     ConstantDB,
     ConstraintDB,
     DiscreteRepresentationDB,
     ExtraFunctionDB,
+    ForestProblemMetaData,
     ObjectiveDB,
     ProblemDB,
     ProblemGetRequest,
     ProblemInfo,
     ProblemInfoSmall,
+    ProblemMetaDataDB,
     ScalarizationFunctionDB,
     SimulatorDB,
     TensorConstantDB,
     TensorVariableDB,
     VariableDB,
     ProblemMetaDataDB,
+    BaseProblemMetaData,
     ForestProblemMetaData,
+    ProblemMetaDataGetRequest,
 )
+from .utopia import UtopiaRequest, UtopiaResponse
 from .reference_point_method import RPMSolveRequest
 from .session import (
     CreateSessionRequest,
@@ -82,6 +93,7 @@ from .state import (
     IntermediateSolutionState,
     NIMBUSBaseState,
     NIMBUSClassificationState,
+    NIMBUSInitializationState,
     NIMBUSSaveState,
     RPMBaseState,
     RPMState,

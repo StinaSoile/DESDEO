@@ -47,3 +47,14 @@ class NIMBUSSaveResponse(SQLModel):
     """The response from NIMBUS save endpoint"""
 
     state_id: int | None = Field(description="The id of the newest state")
+
+    
+class NIMBUSInitializationRequest(SQLModel):
+    """Model of the request to the nimbus method."""
+
+    problem_id: int
+    session_id: int | None = Field(default=None)
+    parent_state_id: int | None = Field(default=None)
+
+    solver: str | None = Field(default=None)
+

@@ -159,10 +159,10 @@ def solve_solutions(
     
     # Collect all current solutions
     current_solutions: list[SolutionAddress] = []
-    for i in range(len(solver_results)):
+    for i, result in enumerate(solver_results):
         current_solutions.append(
             SolutionAddress(
-                objective_values=solver_results[i].optimal_objectives,
+                objective_values=result.optimal_objectives,
                 address_state=state.id,
                 address_result=i
             )
@@ -194,10 +194,10 @@ def solve_solutions(
             continue
         # Get the solver results from state
         parent_solver_results: list[SolverResults] = parent.state.solver_results
-        for i in range(len(parent_solver_results)):
+        for i, solution in enumerate(parent_solver_results):
             all_solutions.append(
                 SolutionAddress(
-                    objective_values=parent_solver_results[i].optimal_objectives,
+                    objective_values=solution.optimal_objectives,
                     address_state=parent.id,
                     address_result=i
                 )

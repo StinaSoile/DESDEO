@@ -244,21 +244,6 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    """
-    print("Current solutions:")
-    for res in result.current_solutions:
-        print(res)
-    print()
-    print("Saved solutions:")
-    for res in result.saved_solutions:
-        print(res)
-    print()
-    print("All solutions:")
-    for res in result.all_solutions:
-        print(res)
-    print()
-    """
-    
     assert len(result.all_solutions) == 3
 
     # Save some solutions!
@@ -301,23 +286,7 @@ def test_nimbus_solve(client: TestClient):
     response = post_json(client, "/method/nimbus/solve", request.model_dump(), access_token)
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
-    assert result.previous_preference == preference
-    
-    """
-    print("Current solutions:")
-    for res in result.current_solutions:
-        print(res)
-    print()
-    print("Saved solutions:")
-    for res in result.saved_solutions:
-        print(res)
-    print()
-    print("All solutions:")
-    for res in result.all_solutions:
-        print(res)
-    print()
-    """
-    
+    assert result.previous_preference == preference   
     # We saved the same solution twice, so the filtering should remove one of those.
     assert len(result.saved_solutions) == 1
     assert len(result.all_solutions) == 6
@@ -365,21 +334,6 @@ def test_nimbus_solve(client: TestClient):
     assert response.status_code == status.HTTP_200_OK
     result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
     assert result.previous_preference == preference
-    
-    """
-    print("Current solutions:")
-    for res in result.current_solutions:
-        print(res)
-    print()
-    print("Saved solutions:")
-    for res in result.saved_solutions:
-        print(res)
-    print()
-    print("All solutions:")
-    for res in result.all_solutions:
-        print(res)
-    """
-    
     assert len(result.saved_solutions) == 2
     assert len(result.all_solutions) == 7
 

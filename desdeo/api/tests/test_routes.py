@@ -21,6 +21,8 @@ from desdeo.api.models import (
     User,
 )
 from desdeo.api.models.archive import UserSavedSolutionAddress, SolutionAddress
+from desdeo.api.models.generic import IntermediateSolutionRequest, IntermediateSolutionResponse
+from desdeo.api.models.archive import UserSavedSolutionAddress, SolutionAddress
 from desdeo.api.models.generic import IntermediateSolutionRequest
 from desdeo.api.routers.user_authentication import create_access_token
 from desdeo.problem.testproblems import simple_knapsack_vectors
@@ -342,15 +344,70 @@ def test_intermediate_solve(client: TestClient):
     """Test that solving intermediate solutions works as expected."""
     access_token = login(client)
 
-    request = IntermediateSolutionRequest(
+    preference = ReferencePoint(aspiration_levels={"f_1": 0.5, "f_2": 0.6, "f_3": 0.4})
+
+    request = NIMBUSClassificationRequest(
         problem_id=1,
-        reference_solution_1={"x_1": 0.2, "x_2": 0.3, "x_3": 0.1, "x_4": 0.1, "x_5": 0.1},
-        reference_solution_2={"x_1": 0.5, "x_2": 0.6, "x_3": 0.4, "x_4": 0.1, "x_5": 0.1},
+        preference=preference,
+        current_objectives={"f_1": 0.6, "f_2": 0.4, "f_3": 0.5},
+        num_desired=2
     )
 
+    response = post_json(client, "/method/nimbus/solve", request.model_dump(), access_token)
+    assert response.status_code == status.HTTP_200_OK
+    result: NIMBUSClassificationResponse = NIMBUSClassificationResponse.model_validate(json.loads(response.content.decode("utf-8")))
+    assert len(result.all_solutions) == 2
+
+    # Save some solutions!
+    solution_1: SolutionAddress = result.current_solutions[0]
+    solution_2: SolutionAddress = result.current_solutions[1]
+    
+    # Create request for intermediate solutions using soutions created with nimbus solve
+    request = IntermediateSolutionRequest(
+        problem_id=1,
+        context="test",
+        reference_solution_1=SolutionAddress(
+            objective_values=solution_1.objective_values,
+            address_state=solution_1.address_state,
+            address_result=solution_1.address_result
+        ),
+        reference_solution_2=SolutionAddress(
+            objective_values=solution_2.objective_values,
+            address_state=solution_2.address_state,
+            address_result=solution_2.address_result
+        ),
+        num_desired=3
+    )
+
+    # Test the generic intermediate endpoint
     response = post_json(client, "/method/generic/intermediate", request.model_dump(), access_token)
     assert response.status_code == status.HTTP_200_OK
-
+    
+    # Test the NIMBUS-specific intermediate endpoint
+    nimbus_request = IntermediateSolutionRequest(
+        problem_id=1,
+        context="nimbus",
+        reference_solution_1=SolutionAddress(
+            objective_values=solution_1.objective_values,
+            address_state=solution_1.address_state,
+            address_result=solution_1.address_result
+        ),
+        reference_solution_2=SolutionAddress(
+            objective_values= solution_2.objective_values,
+            address_state= solution_2.address_state,
+            address_result= solution_2.address_result
+        ),
+        num_desired=3
+    )
+    
+    nimbus_response = post_json(client, "/method/nimbus/intermediate", nimbus_request.model_dump(), access_token)
+    assert nimbus_response.status_code == status.HTTP_200_OK
+    nimbus_result = IntermediateSolutionResponse.model_validate(json.loads(nimbus_response.content.decode("utf-8")))
+    
+    # Verify the NIMBUS response contains expected fields
+    assert nimbus_result.state_id is not None
+    assert len(nimbus_result.current_solutions) > 0
+    assert isinstance(nimbus_result.reference_solution_1, dict)
 
 def test_save_solution(client: TestClient):
     """Test that saving solutions works as expected."""

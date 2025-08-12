@@ -124,8 +124,13 @@ class IntermediateSolutionState(BaseState):
     """State of the nimbus method for computing solutions."""
     method: Literal["generic"] = "generic"
     phase: Literal["solve_intermediate"] = "solve_intermediate"
-
-    scalarization_options: dict[str, float | str | bool] | None = Field(sa_column=Column(JSON), default=None)
+    context: str = Field(
+        default=None,
+        description="The originating method context (e.g., 'nimbus', 'rpm') that requested these solutions"
+    )
+    scalarization_options: dict[str, float | str | bool] | None = Field(
+        sa_column=Column(JSON), default=None
+    )
     solver: str | None = Field(default=None)
     solver_options: dict[str, float | str | bool] | None = Field(sa_column=Column(JSON), default=None)
     num_desired: int | None = Field(default=1)

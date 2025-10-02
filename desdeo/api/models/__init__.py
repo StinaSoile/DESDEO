@@ -16,6 +16,7 @@ __all__ = [  # noqa: RUF022
     "GetSessionRequest",
     "GNIMBUSOptimizationState",
     "GNIMBUSVotingState",
+    "GNIMBUSEndState",
     "InteractiveSessionBase",
     "InteractiveSessionDB",
     "InteractiveSessionInfo",
@@ -72,6 +73,7 @@ __all__ = [  # noqa: RUF022
     "GroupInfoRequest",
     "BasePreferences",
     "ReferencePointDictType",
+    "BooleanDictTypeDecorator",
     "EMOSolveRequest",
     "PreferredRanges",
     "PreferedSolutions",
@@ -91,6 +93,7 @@ __all__ = [  # noqa: RUF022
     "ScoreBandsResponse",
     "OptimizationPreference",
     "VotingPreference",
+    "EndProcessPreference",
     "GNIMBUSResultResponse",
     "FullIteration",
     "GNIMBUSAllIterationsResponse",
@@ -172,12 +175,14 @@ from .state import (
     NIMBUSSaveState,
     GNIMBUSOptimizationState,
     GNIMBUSVotingState,
+    GNIMBUSEndState,
     RPMState,
 )
 from .user import User, UserBase, UserPublic, UserRole
 from .gdm_base import (
     BasePreferences,
     ReferencePointDictType,
+    BooleanDictTypeDecorator,
 )
 from .gdm_aggregate import (
     Group, 
@@ -191,6 +196,7 @@ from .utopia import UtopiaRequest, UtopiaResponse
 from .gnimbus import (
     OptimizationPreference,
     VotingPreference,
+    EndProcessPreference,
     GNIMBUSResultResponse,
     FullIteration,
     GNIMBUSAllIterationsResponse,
